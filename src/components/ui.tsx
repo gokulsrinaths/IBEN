@@ -3,16 +3,7 @@ import Image from "next/image";
 import {
   ArrowUpRight,
   ArrowRight,
-  Scissors,
-  Palette,
-  Paintbrush,
-  Flower2,
-  Gem,
-  Sun,
-  Eye,
-  Sparkles,
   CircleCheck,
-  Search,
 } from "lucide-react";
 import {
   categories,
@@ -134,16 +125,6 @@ export function EditorialHero({
     </section>
   );
 }
-const icons = {
-  scissors: Scissors,
-  palette: Palette,
-  brush: Paintbrush,
-  flower: Flower2,
-  gem: Gem,
-  sun: Sun,
-  eye: Eye,
-  sparkles: Sparkles,
-};
 export function CategoryCard({
   category,
   index,
@@ -151,11 +132,16 @@ export function CategoryCard({
   category: (typeof categories)[number];
   index: number;
 }) {
-  const Icon = icons[category.icon as keyof typeof icons];
   return (
     <Link href={`/apply?category=${category.slug}`} className="category-card">
       <div className="category-top">
-        <Icon size={26} strokeWidth={1.2} />
+        <Image
+          src={`/images/category-${category.slug}.png`}
+          alt=""
+          width={32}
+          height={32}
+          className="category-icon"
+        />
         <span>0{index + 1}</span>
       </div>
       <h3>{category.name}</h3>
@@ -201,10 +187,13 @@ export function EmptyState({
 }) {
   return (
     <div className="empty-state">
-      <span className="empty-icon">
-        <Search size={24} strokeWidth={1.3} />
-      </span>
-
+      <Image
+        src="/images/empty-state.jpg"
+        alt=""
+        width={280}
+        height={280}
+        className="empty-illustration"
+      />
       <h2>{title}</h2>
       <p>{children}</p>
     </div>
@@ -228,8 +217,13 @@ export function RecognitionCard() {
   return (
     <section className="recognition-feature">
       <div className="recognition-art">
-        <div className="orbit orbit-one" />
-        <div className="orbit orbit-two" />
+        <Image
+          src="/images/top50-badge.png"
+          alt=""
+          width={420}
+          height={420}
+          className="recognition-illustration"
+        />
         <RecognitionBadge />
         <span className="art-caption">
           EXCEPTIONAL CRAFT. DESERVED RECOGNITION.

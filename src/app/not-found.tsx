@@ -1,8 +1,16 @@
+import Image from "next/image";
 import { Container, Button } from "@/components/ui";
 export default function NotFound() {
   return (
     <section className="section">
       <Container>
+        <Image
+          src="/images/notfound-illustration.png"
+          alt=""
+          width={200}
+          height={200}
+          className="notfound-illustration"
+        />
         <p className="eyebrow">404 · PAGE NOT FOUND</p>
         <h1 style={{ margin: "20px 0" }}>Let’s find your way.</h1>
         <p className="lead" style={{ marginBottom: 30 }}>

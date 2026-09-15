@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { pages, standards } from "@/lib/pages";
 import {
@@ -110,6 +111,25 @@ export default async function ContentPage({ params, searchParams }: Props) {
                 not a professional licence, government approval or
                 accreditation.
               </p>
+            </div>
+          </Content>
+          <Content>
+            <div className="about-illustration-grid">
+              <Image
+                src="/images/about-illustration.jpg"
+                alt="Illustration of a woman closely examining a strand of styled hair"
+                width={720}
+                height={480}
+                className="about-illustration"
+              />
+              <div>
+                <p className="eyebrow">CONSIDERED, NOT ASSUMED</p>
+                <p className="about-quote">
+                  Every recognition begins with a close look at the work
+                  itself — technique, consistency and care, examined the way
+                  a professional would examine it.
+                </p>
+              </div>
             </div>
           </Content>
           <Content>
@@ -235,6 +255,13 @@ export default async function ContentPage({ params, searchParams }: Props) {
         <>
           <Content className="top50-intro">
             <div className="recognition-art">
+              <Image
+                src="/images/top50-badge.png"
+                alt=""
+                width={420}
+                height={420}
+                className="recognition-illustration"
+              />
               <RecognitionBadge />
             </div>
             <div>
