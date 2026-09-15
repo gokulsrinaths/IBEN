@@ -463,8 +463,9 @@ img {
   opacity: 0.88;
 }
 .empty-illustration {
+  display: block;
+  margin: 0 auto 8px;
   border-radius: 4px;
-  margin-bottom: 8px;
 }
 .notfound-illustration {
   margin-bottom: 24px;
