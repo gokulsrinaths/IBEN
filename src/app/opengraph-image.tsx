@@ -6,64 +6,79 @@ export const alt =
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export default async function OG() {
-  const logo = await readFile(
-    join(process.cwd(), "public/images/logo.png"),
-  );
+  const [logo, hero] = await Promise.all([
+    readFile(join(process.cwd(), "public/images/logo.png")),
+    readFile(join(process.cwd(), "public/images/hero-illustration.jpg")),
+  ]);
   const logoSrc = `data:image/png;base64,${logo.toString("base64")}`;
+  const heroSrc = `data:image/jpeg;base64,${hero.toString("base64")}`;
   return new ImageResponse(
-    <div
-      style={{
-        background: "#f8f7f3",
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        padding: "65px 80px",
-        color: "#292d25",
-      }}
-    >
+    (
       <div
         style={{
+          background: "#f8f7f3",
+          width: "100%",
+          height: "100%",
           display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          borderBottom: "1px solid #c9c7b9",
-          paddingBottom: 25,
+          color: "#292d25",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+        <div
+          style={{
+            width: "62%",
+            display: "flex",
+            flexDirection: "column",
+            padding: "60px 0 60px 70px",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={logoSrc} width={52} height={49} alt="" />
+            <div style={{ fontSize: 42, fontFamily: "serif" }}>IBEN</div>
+          </div>
+          <div
+            style={{
+              fontSize: 66,
+              fontFamily: "serif",
+              lineHeight: 1.1,
+              marginTop: 44,
+            }}
+          >
+            Recognising Excellence
+          </div>
+          <div
+            style={{
+              fontSize: 66,
+              fontFamily: "serif",
+              color: "#8b7352",
+              fontStyle: "italic",
+            }}
+          >
+            in Indian Beauty.
+          </div>
+          <div style={{ marginTop: "auto", fontSize: 15, letterSpacing: 4 }}>
+            CRAFT. CHARACTER. EXCELLENCE.
+          </div>
+        </div>
+        <div
+          style={{
+            width: "38%",
+            height: "100%",
+            display: "flex",
+            position: "relative",
+          }}
+        >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={logoSrc} width={64} height={61} alt="" />
-          <div style={{ fontSize: 60, fontFamily: "serif" }}>IBEN</div>
+          <img
+            src={heroSrc}
+            width={456}
+            height={630}
+            style={{ objectFit: "cover", objectPosition: "top" }}
+            alt=""
+          />
         </div>
-        <div style={{ fontSize: 15, letterSpacing: 3 }}>
-          INDIA BEAUTY EXCELLENCE NETWORK
-        </div>
       </div>
-      <div
-        style={{
-          fontSize: 82,
-          fontFamily: "serif",
-          lineHeight: 1.08,
-          marginTop: 55,
-        }}
-      >
-        Recognising Excellence
-      </div>
-      <div
-        style={{
-          fontSize: 82,
-          fontFamily: "serif",
-          color: "#8b7352",
-          fontStyle: "italic",
-        }}
-      >
-        in Indian Beauty.
-      </div>
-      <div style={{ marginTop: 38, fontSize: 16, letterSpacing: 4 }}>
-        CRAFT. CHARACTER. EXCELLENCE.
-      </div>
-    </div>,
+    ),
     size,
   );
 }
