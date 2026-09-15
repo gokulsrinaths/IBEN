@@ -1,0 +1,433 @@
+"use client";
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { ArrowRight, ArrowLeft, Upload, CheckCircle2 } from "lucide-react";
+import { categories } from "@/lib/data";
+import {
+  personal,
+  practice,
+  nomination,
+  contact,
+  validateField,
+  type Values,
+  type FieldSpec,
+} from "@/lib/form-fields";
+import { submitForm, formCopy } from "@/lib/submission-client";
+function Field({
+  spec: s,
+  values,
+  onChange,
+}: {
+  spec: FieldSpec;
+  values: Values;
+  onChange: (name: string, value: string) => void;
+}) {
+  const common = {
+    id: s.name,
+    name: s.name,
+    required: s.required,
+    value: values[s.name] || "",
+    onChange: (
+      e: React.ChangeEvent<
+        HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+      >,
+    ) => {
+      e.target.setCustomValidity("");
+      onChange(s.name, e.target.value);
+    },
+    "aria-describedby": s.hint ? `${s.name}-hint` : undefined,
+  };
+  return (
+    <label className={`field ${s.wide ? "wide" : ""}`} htmlFor={s.name}>
+      <span>
+        {s.label}
+        {s.required && <span aria-label="required"> *</span>}
+      </span>
+      {s.options ? (
+        <select {...common}>
+          <option value="">Select an option</option>
+          {s.options.map((o) => (
+            <option key={o}>{o}</option>
+          ))}
+        </select>
+      ) : s.type === "textarea" ? (
+        <textarea {...common} rows={4} maxLength={5000} />
+      ) : (
+        <input
+          {...common}
+          type={s.type || "text"}
+          min={s.min}
+          max={s.max}
+          maxLength={s.type === "number" ? undefined : 500}
+          step={s.type === "number" ? 1 : undefined}
+          autoComplete={
+            s.type === "email"
+              ? "email"
+              : s.type === "tel"
+                ? "tel"
+                : s.name === "fullName" || s.name === "name"
+                  ? "name"
+                  : s.name === "city"
+                    ? "address-level2"
+                    : s.name === "state"
+                      ? "address-level1"
+                      : undefined
+          }
+          inputMode={s.type === "tel" ? "tel" : undefined}
+        />
+      )}{" "}
+      {s.hint && <small id={`${s.name}-hint`}>{s.hint}</small>}
+    </label>
+  );
+}
+export function ApplicationForm({
+  initialCategory = "",
+}: {
+  initialCategory?: string;
+}) {
+  return (
+    <RecognitionForm kind="application" initialCategory={initialCategory} />
+  );
+}
+export function NominationForm() {
+  return <RecognitionForm kind="nomination" />;
+}
+export function ContactForm() {
+  return <RecognitionForm kind="contact" />;
+}
+function RecognitionForm({
+  kind,
+  initialCategory = "",
+}: {
+  kind: "application" | "nomination" | "contact";
+  initialCategory?: string;
+}) {
+  const application = kind === "application";
+  const copy = formCopy[kind];
+  const [pending, setPending] = useState(false);
+  const [reference, setReference] = useState("");
+  const [step, setStep] = useState(0);
+  const [values, setValues] = useState<Values>({
+    category: categories.find((c) => c.slug === initialCategory)?.name || "",
+  });
+  const [files, setFiles] = useState<File[]>([]);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+  const form = useRef<HTMLFormElement>(null);
+  const heading = useRef<HTMLHeadingElement>(null);
+  const specs = application
+    ? step === 0
+      ? personal
+      : step === 1
+        ? practice
+        : []
+    : kind === "nomination"
+      ? nomination
+      : contact;
+  const setValue = (name: string, value: string) => {
+    setValues((v) => ({ ...v, [name]: value }));
+    setSuccess(false);
+  };
+  const move = (next: number) => {
+    setStep(next);
+    setError("");
+    setTimeout(() => {
+      heading.current?.focus();
+      heading.current?.scrollIntoView({ behavior: "instant", block: "center" });
+    }, 0);
+  };
+  const validate = () => {
+    for (const spec of specs) {
+      const input = form.current?.elements.namedItem(spec.name) as
+        HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null;
+      input?.setCustomValidity(validateField(spec, values[spec.name] || ""));
+    }
+    return form.current?.reportValidity();
+  };
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (pending) return;
+    setError("");
+    setSuccess(false);
+    if (!validate()) return;
+    if (application && step < 2) {
+      move(step + 1);
+      return;
+    }
+    setPending(true);
+    try {
+      const result = await submitForm({ kind, values, files });
+      if (result.ok) {
+        setReference(result.reference);
+        setSuccess(true);
+      } else
+        setError(result.code === "unavailable" ? copy.unavailable : copy.error);
+    } catch {
+      setError(copy.error);
+    } finally {
+      setPending(false);
+    }
+  };
+  const addFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const incoming = Array.from(e.target.files || []);
+    setError("");
+    if (files.length + incoming.length > 8) {
+      setError("Choose up to 8 portfolio images in total.");
+      e.target.value = "";
+      return;
+    }
+    if (
+      incoming.some(
+        (f) =>
+          !["image/jpeg", "image/png", "image/webp"].includes(f.type) ||
+          f.size > 5 * 1024 * 1024,
+      )
+    ) {
+      setError("Use JPG, PNG or WebP images, each no larger than 5 MB.");
+      e.target.value = "";
+      return;
+    }
+    setFiles((old) => [
+      ...old,
+      ...incoming.filter(
+        (f) => !old.some((o) => o.name === f.name && o.size === f.size),
+      ),
+    ]);
+    setSuccess(false);
+    e.target.value = "";
+  };
+  return (
+    <div className="form-panel">
+      {application && (
+        <ol className="form-steps" aria-label="Application progress">
+          {["Your details", "Your practice", "Review & declaration"].map(
+            (s, i) => (
+              <li
+                key={s}
+                className={step >= i ? "active" : ""}
+                aria-current={step === i ? "step" : undefined}
+              >
+                0{i + 1} · {s}
+              </li>
+            ),
+          )}
+        </ol>
+      )}
+      <h2 className="form-title" ref={heading} tabIndex={-1}>
+        {application
+          ? [
+              "Let’s start with you.",
+              "Tell us about your craft.",
+              "Review your application.",
+            ][step]
+          : kind === "nomination"
+            ? "Put exceptional work forward."
+            : "How can we help?"}
+      </h2>
+      <p className="form-description">
+        {application && step === 2
+          ? "Check your details and declarations before continuing."
+          : "Fields marked * are required."}
+      </p>
+      <div className="notice">
+        <strong>{copy.notice}</strong> Entries and images remain on this page
+        while submissions are unavailable. Leaving or reloading clears them.
+      </div>
+      <form ref={form} onSubmit={submit} noValidate aria-busy={pending}>
+        <fieldset disabled={pending} className="form-fields">
+          <div className="form-grid">
+            {specs.map((s) => (
+              <Field
+                key={s.name}
+                spec={s}
+                values={values}
+                onChange={setValue}
+              />
+            ))}
+          </div>
+          {application && step === 1 && (
+            <div className="wide" style={{ marginTop: 25 }}>
+              <label className="field" htmlFor="portfolioFiles">
+                Portfolio images (optional)
+              </label>
+              <div className="upload-zone">
+                <Upload size={25} />
+                <p>
+                  Up to 8 images · JPG, PNG or WebP · 5 MB each
+                  <br />
+                  Select only work and images you have permission to share.
+                </p>
+                <p id="upload-guidance">
+                  HEIC/HEIF images are not supported. Export them as JPG first.
+                  Images are previewed locally and are not uploaded while
+                  submissions are unavailable.
+                </p>
+                <input
+                  aria-describedby="upload-guidance"
+                  id="portfolioFiles"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  multiple
+                  onChange={addFiles}
+                />
+              </div>
+              <ul className="file-list preview-list">
+                {files.map((f, i) => (
+                  <li key={`${f.name}-${i}`}>
+                    <UploadPreview file={f} />
+                    <span>
+                      {f.name} · {(f.size / 1024 / 1024).toFixed(1)} MB
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setFiles(files.filter((_, j) => j !== i))}
+                      aria-label={`Remove ${f.name}`}
+                    >
+                      Remove
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {application && step === 2 && (
+            <dl className="review-list">
+              {[...personal, ...practice].map((s) => (
+                <div key={s.name}>
+                  <dt>{s.label}</dt>
+                  <dd>{values[s.name] || "Not provided"}</dd>
+                </div>
+              ))}
+              <div>
+                <dt>Portfolio images</dt>
+                <dd>
+                  {files.length
+                    ? files.map((f) => f.name).join(", ")
+                    : "None selected"}
+                </dd>
+              </div>
+            </dl>
+          )}
+          {(!application || step === 2) && (
+            <>
+              <label className="checkbox-field">
+                <input
+                  type="checkbox"
+                  name="consent"
+                  required
+                  checked={values.consent === "yes"}
+                  onChange={(e) =>
+                    setValue("consent", e.target.checked ? "yes" : "")
+                  }
+                />
+                <span>
+                  I have read the{" "}
+                  <Link href="/privacy" target="_blank">
+                    privacy notice (opens a new tab)
+                  </Link>{" "}
+                  and understand that no information is submitted until IBEN
+                  confirms receipt. *
+                </span>
+              </label>
+              {kind !== "contact" && (
+                <label className="checkbox-field">
+                  <input
+                    type="checkbox"
+                    name="accuracy"
+                    required
+                    checked={values.accuracy === "yes"}
+                    onChange={(e) =>
+                      setValue("accuracy", e.target.checked ? "yes" : "")
+                    }
+                  />
+                  <span>
+                    I confirm that the information is accurate to the best of my
+                    knowledge and that I have permission to share the
+                    information and portfolio links provided. I understand that
+                    recognition is subject to review and is not guaranteed. *
+                  </span>
+                </label>
+              )}
+            </>
+          )}
+          {error && (
+            <p role="alert" className="status-message error">
+              {error}
+            </p>
+          )}
+          {success && (
+            <div role="status" className="status-message">
+              <CheckCircle2 size={18} />
+              <strong>{copy.success}</strong> Reference: {reference}.{" "}
+              {copy.nextStep}
+            </div>
+          )}
+          <div className="form-actions">
+            {application && step > 0 ? (
+              <button
+                type="button"
+                className="button button-outline"
+                onClick={() => move(step - 1)}
+              >
+                <ArrowLeft size={15} />
+                Back
+              </button>
+            ) : (
+              <span />
+            )}
+            <button
+              type="submit"
+              className="button button-dark"
+              disabled={pending || success}
+            >
+              {application && step < 2 ? (
+                <>
+                  Continue
+                  <ArrowRight size={15} />
+                </>
+              ) : (
+                <>
+                  {pending ? "Checking availability..." : copy.action}
+                  <ArrowRight size={15} />
+                </>
+              )}
+            </button>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+  );
+}
+
+function UploadPreview({ file }: { file: File }) {
+  const [url, setUrl] = useState("");
+  const [failed, setFailed] = useState(false);
+  useEffect(() => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") setUrl(reader.result);
+    };
+    reader.onerror = () => setFailed(true);
+    reader.readAsDataURL(file);
+    return () => {
+      reader.onload = null;
+      reader.onerror = null;
+      if (reader.readyState === FileReader.LOADING) reader.abort();
+    };
+  }, [file]);
+  return url && !failed ? (
+    <Image
+      src={url}
+      alt={`Preview of ${file.name}`}
+      width={88}
+      height={88}
+      unoptimized
+      onError={() => setFailed(true)}
+    />
+  ) : (
+    <span className="preview-fallback">
+      {failed ? "Preview unavailable" : "Loading preview"}
+    </span>
+  );
+}
