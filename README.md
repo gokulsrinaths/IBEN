@@ -75,9 +75,9 @@ Add an entry to `programs` and its editorial route configuration to `pages`; ass
 
 Add a verified item to `news`: unique `slug`, `title`, one of the `newsCategories`, ISO `date` (`YYYY-MM-DD`), `excerpt` and plain-text `paragraphs`. The list, article route and sitemap update automatically after deployment. Drafts should not be added to the published array. No rich HTML is accepted in article content.
 
-### Photography
+### Photography and illustration
 
-`public/images/craft.jpg` is an editorial stock photograph, used to represent hair texture and craft. It does not depict an IBEN member, selected professional or endorsed business. Source: https://images.unsplash.com/photo-1522337360788-8b13dee7a37e . Replace it with commissioned, cleared brand photography when available. The visual style applies restrained desaturation and a dark caption overlay. The logo and Top 50 typographic treatment are original CSS/type compositions, not accreditation seals.
+`public/images/hero-illustration.jpg` is a commissioned-style brand illustration extending the logo's maroon/gold hair motif; it does not depict an IBEN member, selected professional or endorsed business. `public/images/logo.png` is the transparent brand mark used in the header, footer, favicon and social preview image. The logo and Top 50 typographic treatment are original CSS/type compositions, not accreditation seals.
 
 ## Environment variables
 

@@ -298,6 +298,10 @@ img {
   object-position: center 40%;
   filter: saturate(0.48) brightness(0.78);
 }
+.hero-visual--illustrated > img {
+  object-position: center 12%;
+  filter: none;
+}
 .image-shade {
   position: absolute;
   inset: 0;

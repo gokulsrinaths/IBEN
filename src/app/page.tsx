@@ -46,10 +46,10 @@ export default function Home() {
                 CRAFT
               </div>
             </div>
-            <div className="hero-visual">
+            <div className="hero-visual hero-visual--illustrated">
               <Image
-                src="/images/craft.jpg"
-                alt="Editorial study of hair artistry and texture"
+                src="/images/hero-illustration.jpg"
+                alt="Illustration of a woman styling her hair, in IBEN's brand colours"
                 fill
                 priority
                 sizes="(max-width: 767px) 100vw, 50vw"
