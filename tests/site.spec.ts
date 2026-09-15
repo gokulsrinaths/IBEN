@@ -83,7 +83,8 @@ test("all public routes, internal links, metadata and missing records", async ({
     "/sitemap.xml",
     "/robots.txt",
     "/opengraph-image",
-    "/icon.svg",
+    "/icon.png",
+    "/apple-icon.png",
   ])
     expect((await request.get(route)).status()).toBe(200);
   expect(errors).toEqual([]);
