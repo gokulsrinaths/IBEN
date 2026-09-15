@@ -1,9 +1,15 @@
 import { ImageResponse } from "next/og";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 export const alt =
   "India Beauty Excellence Network — Recognising Excellence in Indian Beauty.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export default function OG() {
+export default async function OG() {
+  const logo = await readFile(
+    join(process.cwd(), "public/images/logo.png"),
+  );
+  const logoSrc = `data:image/png;base64,${logo.toString("base64")}`;
   return new ImageResponse(
     <div
       style={{
@@ -25,7 +31,11 @@ export default function OG() {
           paddingBottom: 25,
         }}
       >
-        <div style={{ fontSize: 60, fontFamily: "serif" }}>IBEN</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={logoSrc} width={64} height={61} alt="" />
+          <div style={{ fontSize: 60, fontFamily: "serif" }}>IBEN</div>
+        </div>
         <div style={{ fontSize: 15, letterSpacing: 3 }}>
           INDIA BEAUTY EXCELLENCE NETWORK
         </div>

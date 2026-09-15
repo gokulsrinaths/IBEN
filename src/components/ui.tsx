@@ -390,6 +390,13 @@ export function Footer() {
         <div className="footer-top">
           <div className="footer-brand">
             <Link href="/" className="wordmark">
+              <Image
+                src="/images/logo.png"
+                alt=""
+                width={44}
+                height={42}
+                className="wordmark-logo"
+              />
               IBEN
             </Link>
             <p>{organization.name}</p>

@@ -185,6 +185,10 @@ img {
   align-items: center;
   gap: 17px;
 }
+.wordmark-logo {
+  height: 0.9em;
+  width: auto;
+}
 .wordmark > span {
   font-family: var(--font-sans), sans-serif;
   font-weight: 500;

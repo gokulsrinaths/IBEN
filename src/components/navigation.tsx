@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Menu, X, ArrowUpRight } from "lucide-react";
@@ -34,6 +35,14 @@ export function Header() {
     <header className="header">
       <div className="container header-inner">
         <Link href="/" className="wordmark" aria-label="IBEN home">
+          <Image
+            src="/images/logo.png"
+            alt=""
+            width={44}
+            height={42}
+            className="wordmark-logo"
+            priority
+          />
           IBEN
           <span>
             INDIA BEAUTY
