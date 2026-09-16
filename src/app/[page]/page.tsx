@@ -117,7 +117,7 @@ export default async function ContentPage({ params, searchParams }: Props) {
             <div className="about-illustration-grid">
               <Image
                 src="/images/about-illustration.jpg"
-                alt="Illustration of a woman closely examining a strand of styled hair"
+                alt="Illustration of a hairstylist combing a client's hair"
                 width={720}
                 height={480}
                 className="about-illustration"
