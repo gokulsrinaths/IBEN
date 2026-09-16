@@ -299,7 +299,7 @@ img {
   filter: saturate(0.48) brightness(0.78);
 }
 .hero-visual--illustrated > img {
-  object-position: center 12%;
+  object-position: 78% 30%;
   filter: none;
 }
 .image-shade {

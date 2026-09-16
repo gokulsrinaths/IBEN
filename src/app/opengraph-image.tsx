@@ -73,7 +73,7 @@ export default async function OG() {
             src={heroSrc}
             width={456}
             height={630}
-            style={{ objectFit: "cover", objectPosition: "top" }}
+            style={{ objectFit: "cover", objectPosition: "78% 30%" }}
             alt=""
           />
         </div>
