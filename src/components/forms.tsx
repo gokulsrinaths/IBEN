@@ -13,7 +13,7 @@ import {
   type Values,
   type FieldSpec,
 } from "@/lib/form-fields";
-import { submitForm, formCopy } from "@/lib/submission-client";
+import { submitForm, formCopy, checkAvailability } from "@/lib/submission-client";
 function Field({
   spec: s,
   values,
@@ -120,8 +120,18 @@ function RecognitionForm({
   const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [available, setAvailable] = useState<boolean | null>(null);
   const form = useRef<HTMLFormElement>(null);
   const heading = useRef<HTMLHeadingElement>(null);
+  useEffect(() => {
+    let cancelled = false;
+    checkAvailability().then((ok) => {
+      if (!cancelled) setAvailable(ok);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
   const specs = application
     ? step === 0
       ? personal
@@ -236,10 +246,13 @@ function RecognitionForm({
           ? "Check your details and declarations before continuing."
           : "Fields marked * are required."}
       </p>
-      <div className="notice">
-        <strong>{copy.notice}</strong> Entries and images remain on this page
-        while submissions are unavailable. Leaving or reloading clears them.
-      </div>
+      {available === false && (
+        <div className="notice">
+          <strong>{copy.notice}</strong> Entries and images remain on this
+          page while submissions are unavailable. Leaving or reloading clears
+          them.
+        </div>
+      )}
       <form ref={form} onSubmit={submit} noValidate aria-busy={pending}>
         <fieldset disabled={pending} className="form-fields">
           <div className="form-grid">

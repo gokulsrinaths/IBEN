@@ -34,22 +34,29 @@ export const formCopy = {
 };
 
 /** Availability checks contain no entries or files. Never transmit them while closed. */
+export async function checkAvailability(): Promise<boolean> {
+  try {
+    const availability = await fetch("/api/submissions", {
+      cache: "no-store",
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!availability.ok) return false;
+    const status: unknown = await availability.json();
+    return (
+      !!status &&
+      typeof status === "object" &&
+      "available" in status &&
+      status.available === true
+    );
+  } catch {
+    return false;
+  }
+}
+
 export async function submitForm(
   input: SubmissionInput,
 ): Promise<SubmissionResult> {
-  const availability = await fetch("/api/submissions", {
-    cache: "no-store",
-    signal: AbortSignal.timeout(10000),
-  });
-  if (!availability.ok) return { ok: false, code: "unavailable" };
-  const status: unknown = await availability.json();
-  if (
-    !status ||
-    typeof status !== "object" ||
-    !("available" in status) ||
-    status.available !== true
-  )
-    return { ok: false, code: "unavailable" };
+  if (!(await checkAvailability())) return { ok: false, code: "unavailable" };
   const body = new FormData();
   body.set("kind", input.kind);
   body.set("values", JSON.stringify(input.values));
