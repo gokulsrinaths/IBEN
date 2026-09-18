@@ -10,19 +10,32 @@ export type FieldSpec = {
   hint?: string;
   min?: number;
   max?: number;
+  placeholder?: string;
 };
 export const personal: FieldSpec[] = [
-  { name: "fullName", label: "Full name", required: true },
+  { name: "fullName", label: "Full name", required: true, placeholder: "e.g. Priya Sharma" },
   {
     name: "phone",
     label: "Phone number",
     type: "tel",
     required: true,
     hint: "Include your country code, e.g. +91.",
+    placeholder: "e.g. +91 98765 43210",
   },
-  { name: "email", label: "Email address", type: "email", required: true },
-  { name: "city", label: "City", required: true },
-  { name: "state", label: "State / Union territory", required: true },
+  {
+    name: "email",
+    label: "Email address",
+    type: "email",
+    required: true,
+    placeholder: "e.g. priya@example.com",
+  },
+  { name: "city", label: "City", required: true, placeholder: "e.g. Mumbai" },
+  {
+    name: "state",
+    label: "State / Union territory",
+    required: true,
+    placeholder: "e.g. Maharashtra",
+  },
   {
     name: "experience",
     label: "Years of experience",
@@ -30,6 +43,7 @@ export const personal: FieldSpec[] = [
     required: true,
     min: 0,
     max: 80,
+    placeholder: "e.g. 5",
   },
 ];
 export const practice: FieldSpec[] = [
@@ -54,12 +68,18 @@ export const practice: FieldSpec[] = [
     label: "Specialisations",
     required: true,
     hint: "Separate areas of expertise with commas.",
+    placeholder: "e.g. Balayage, precision cutting, keratin treatments",
   },
-  { name: "workplace", label: "Current workplace / salon" },
+  {
+    name: "workplace",
+    label: "Current workplace / salon",
+    placeholder: "e.g. Studio name or salon",
+  },
   {
     name: "profileUrl",
     label: "Instagram / professional profile URL",
     type: "url",
+    placeholder: "https://instagram.com/yourhandle",
   },
   {
     name: "portfolioUrl",
@@ -67,6 +87,7 @@ export const practice: FieldSpec[] = [
     type: "url",
     required: true,
     hint: "Use an accessible https:// link to work you have permission to share.",
+    placeholder: "https://yourportfolio.example.com",
   },
   {
     name: "bio",
@@ -74,12 +95,15 @@ export const practice: FieldSpec[] = [
     type: "textarea",
     required: true,
     wide: true,
+    placeholder:
+      "Describe your professional background, training and approach.",
   },
   {
     name: "achievements",
     label: "Major achievements",
     type: "textarea",
     wide: true,
+    placeholder: "Awards, features, certifications or notable collaborations.",
   },
   {
     name: "reason",
@@ -87,15 +111,18 @@ export const practice: FieldSpec[] = [
     type: "textarea",
     required: true,
     wide: true,
+    placeholder:
+      "Be specific about technique, consistency and the results your clients see.",
   },
 ];
 export const nomination: FieldSpec[] = [
-  { name: "nominatorName", label: "Your name", required: true },
+  { name: "nominatorName", label: "Your name", required: true, placeholder: "e.g. Anjali Mehta" },
   {
     name: "nominatorEmail",
     label: "Your email",
     type: "email",
     required: true,
+    placeholder: "e.g. anjali@example.com",
   },
   {
     name: "relationship",
@@ -110,8 +137,18 @@ export const nomination: FieldSpec[] = [
     ],
     wide: true,
   },
-  { name: "nomineeName", label: "Professional name", required: true },
-  { name: "city", label: "Professional’s city", required: true },
+  {
+    name: "nomineeName",
+    label: "Professional name",
+    required: true,
+    placeholder: "e.g. Priya Sharma",
+  },
+  {
+    name: "city",
+    label: "Professional’s city",
+    required: true,
+    placeholder: "e.g. Mumbai",
+  },
   {
     name: "category",
     label: "Category",
@@ -123,6 +160,7 @@ export const nomination: FieldSpec[] = [
     label: "Instagram / portfolio URL",
     type: "url",
     required: true,
+    placeholder: "https://instagram.com/theirhandle",
   },
   {
     name: "reason",
@@ -130,11 +168,18 @@ export const nomination: FieldSpec[] = [
     type: "textarea",
     required: true,
     wide: true,
+    placeholder: "Why does this person's work deserve recognition?",
   },
 ];
 export const contact: FieldSpec[] = [
-  { name: "name", label: "Your name", required: true },
-  { name: "email", label: "Email address", type: "email", required: true },
+  { name: "name", label: "Your name", required: true, placeholder: "e.g. Priya Sharma" },
+  {
+    name: "email",
+    label: "Email address",
+    type: "email",
+    required: true,
+    placeholder: "e.g. priya@example.com",
+  },
   {
     name: "topic",
     label: "Enquiry type",
@@ -153,6 +198,7 @@ export const contact: FieldSpec[] = [
     type: "textarea",
     required: true,
     wide: true,
+    placeholder: "Tell us what you'd like help with.",
   },
 ];
 

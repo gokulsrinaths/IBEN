@@ -52,11 +52,17 @@ function Field({
           ))}
         </select>
       ) : s.type === "textarea" ? (
-        <textarea {...common} rows={4} maxLength={5000} />
+        <textarea
+          {...common}
+          rows={4}
+          maxLength={5000}
+          placeholder={s.placeholder}
+        />
       ) : (
         <input
           {...common}
           type={s.type || "text"}
+          placeholder={s.placeholder}
           min={s.min}
           max={s.max}
           maxLength={s.type === "number" ? undefined : 500}
