@@ -15,6 +15,7 @@ export const organization = {
     partnerships: process.env.NEXT_PUBLIC_PARTNERSHIPS_EMAIL,
     support: process.env.NEXT_PUBLIC_SUPPORT_EMAIL,
   },
+  phone: process.env.NEXT_PUBLIC_CONTACT_PHONE,
   leadership: [] as { name: string; role: string; bio: string }[],
   socials: [] as { label: string; url: string }[],
 };
@@ -189,7 +190,7 @@ export const faqs = [
   ],
   [
     "Are applications currently being accepted?",
-    "Online submissions are not yet available. You can review the form and prepare your information, but it will not be sent or saved. Intake details will be published when confirmed.",
+    "Yes. Applications, nominations and enquiries can be submitted online. Receipt of a submission does not mean selection or recognition; every submission is subject to review.",
   ],
 ];
 export type Professional = {

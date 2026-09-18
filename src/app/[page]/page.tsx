@@ -305,8 +305,8 @@ export default async function ContentPage({ params, searchParams }: Props) {
               </p>
               <div className="notice">
                 <strong>2026 intake details are pending confirmation.</strong>{" "}
-                Online submissions are not yet available. No application
-                deadline, fee or selection date has been published.
+                No application deadline, fee or selection date has been
+                published.
               </div>
             </div>
           </Content>
@@ -569,6 +569,17 @@ export default async function ContentPage({ params, searchParams }: Props) {
                   Contact email addresses will be published once confirmed.
                 </p>
               )}
+              {organization.phone && (
+                <div>
+                  <h3>Phone</h3>
+                  <a
+                    className="text-link"
+                    href={`tel:${organization.phone.replace(/\s+/g, "")}`}
+                  >
+                    {organization.phone}
+                  </a>
+                </div>
+              )}
             </div>
           </aside>
         </Content>
@@ -700,10 +711,10 @@ export default async function ContentPage({ params, searchParams }: Props) {
             </p>
             <h2>Applications and nominations</h2>
             <p>
-              Online submissions are not yet available. Completing the form or
-              checking availability does not submit an application, create a
-              receipt or establish a shortlist position. Intake dates and any
-              programme conditions must be confirmed before submission opens.
+              Submitting an application, nomination or enquiry does not
+              create a shortlist position or guarantee recognition. Intake
+              dates and any programme conditions will be confirmed and
+              published as the 2026 selection process proceeds.
             </p>
             <h2>Accuracy and permitted use</h2>
             <p>
