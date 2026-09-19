@@ -1,15 +1,24 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { professionals } from "@/lib/data";
+import { getPublishedProfessionalBySlug } from "@/lib/professionals-repository";
 import { pageMetadata } from "@/lib/seo";
-import { Container, EditorialHero, VerificationRecord } from "@/components/ui";
+import {
+  Container,
+  EditorialHero,
+  VerificationRecord,
+  ProfileStats,
+  CTASection,
+} from "@/components/ui";
+import { ProfileGallery } from "@/components/gallery";
 type Props = { params: Promise<{ slug: string }> };
+export const dynamicParams = true;
+export const revalidate = 300;
 export function generateStaticParams() {
-  return professionals.map((p) => ({ slug: p.slug }));
+  return [];
 }
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
-  const p = professionals.find((p) => p.slug === slug);
+  const p = await getPublishedProfessionalBySlug(slug);
   return p
     ? pageMetadata(
         p.name,
@@ -20,7 +29,7 @@ export async function generateMetadata({ params }: Props) {
 }
 export default async function Profile({ params }: Props) {
   const { slug } = await params;
-  const p = professionals.find((p) => p.slug === slug);
+  const p = await getPublishedProfessionalBySlug(slug);
   if (!p) notFound();
   return (
     <>
@@ -29,48 +38,44 @@ export default async function Profile({ params }: Props) {
         title={p.name}
         description={`${p.city}, ${p.state} · ${p.category}`}
       />
+      <div className="profile-hero-image">
+        <Image
+          src={p.image}
+          alt={p.name}
+          fill
+          priority
+          sizes="100vw"
+          style={{ objectFit: "cover" }}
+        />
+        <div className="profile-hero-badge">
+          IBEN {p.recognition.replace(/^IBEN\s*/i, "")} · {p.year}
+        </div>
+      </div>
+      <section className="content-section">
+        <Container>
+          <ProfileStats professional={p} />
+        </Container>
+      </section>
       <section className="content-section">
         <Container className="profile-grid">
           <div>
-            <Image
-              src={p.image}
-              alt={p.name}
-              width={600}
-              height={750}
-              sizes="(max-width:767px) 100vw, 33vw"
-            />
             <VerificationRecord professional={p} />
           </div>
           <div className="prose">
             <h2>About the professional</h2>
             <p>{p.bio}</p>
             <h2>Areas of expertise</h2>
-            <ul>
+            <div className="chip-list">
               {p.specialisations.map((s) => (
-                <li key={s}>{s}</li>
+                <span key={s} className="chip">
+                  {s}
+                </span>
               ))}
-            </ul>
+            </div>
             <h2>Professional experience</h2>
             <p>{p.experience}</p>
             <h2>Selected portfolio</h2>
-            {p.portfolio.length ? (
-              <div className="info-grid">
-                {p.portfolio.map((work) => (
-                  <figure key={work.image}>
-                    <Image
-                      src={work.image}
-                      alt={work.caption}
-                      width={600}
-                      height={700}
-                      sizes="(max-width:767px) 100vw, 33vw"
-                    />
-                    <figcaption>{work.caption}</figcaption>
-                  </figure>
-                ))}
-              </div>
-            ) : (
-              <p>A public portfolio has not been published for this record.</p>
-            )}
+            <ProfileGallery items={p.portfolio} />
             <h2>Recognition information</h2>
             <p>
               {p.name} is listed for {p.recognition}, {p.year}. The record
@@ -80,6 +85,7 @@ export default async function Profile({ params }: Props) {
           </div>
         </Container>
       </section>
+      <CTASection />
     </>
   );
 }

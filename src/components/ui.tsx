@@ -306,6 +306,24 @@ export function VerificationRecord({
     </aside>
   );
 }
+export function ProfileStats({ professional: p }: { professional: Professional }) {
+  const stats: [string, string][] = [
+    ["Experience", p.experience],
+    ["Category", p.category],
+    ["Recognition year", String(p.year)],
+    ["Specialisations", String(p.specialisations.length)],
+  ];
+  return (
+    <div className="profile-stats">
+      {stats.map(([label, value]) => (
+        <div key={label}>
+          <strong>{value}</strong>
+          <span>{label}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
 export function ProfessionalCard({
   professional: p,
 }: {

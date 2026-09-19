@@ -1,8 +1,12 @@
 "use client";
 import { useState } from "react";
-import { categories, professionals, news, newsCategories } from "@/lib/data";
+import { categories, news, newsCategories, type Professional } from "@/lib/data";
 import { EmptyState, ProfessionalCard, NewsCard } from "./ui";
-export function ProfessionalDirectory() {
+export function ProfessionalDirectory({
+  professionals,
+}: {
+  professionals: Professional[];
+}) {
   const [filters, setFilters] = useState({
     search: "",
     city: "",

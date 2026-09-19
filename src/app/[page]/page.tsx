@@ -30,6 +30,7 @@ import {
   ContactForm,
 } from "@/components/forms";
 import { ProfessionalDirectory, NewsDirectory } from "@/components/directory";
+import { getPublishedProfessionals } from "@/lib/professionals-repository";
 type Props = {
   params: Promise<{ page: string }>;
   searchParams: Promise<{ category?: string }>;
@@ -37,6 +38,10 @@ type Props = {
 export function generateStaticParams() {
   return Object.keys(pages).map((page) => ({ page }));
 }
+// The "professionals" page reads live Supabase data; the publish/unpublish
+// admin routes call revalidatePath("/professionals") for instant updates,
+// this is just a safety-net window for any change made outside that flow.
+export const revalidate = 300;
 export async function generateMetadata({ params }: Props) {
   const { page } = await params;
   const p = pages[page];
@@ -470,13 +475,15 @@ export default async function ContentPage({ params, searchParams }: Props) {
         </>
       );
       break;
-    case "professionals":
+    case "professionals": {
+      const publishedProfessionals = await getPublishedProfessionals();
       content = (
         <Content>
-          <ProfessionalDirectory />
+          <ProfessionalDirectory professionals={publishedProfessionals} />
         </Content>
       );
       break;
+    }
     case "news":
       content = (
         <Content>

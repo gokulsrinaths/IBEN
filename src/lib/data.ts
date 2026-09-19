@@ -208,7 +208,9 @@ export type Professional = {
   experience: string;
   portfolio: { image: string; caption: string }[];
 };
-export const professionals: Professional[] = [];
+// Published professionals now come from Supabase -- see
+// `src/lib/professionals-repository.ts`. This static array was the
+// only publish mechanism before that pipeline existed.
 export type News = {
   slug: string;
   title: string;

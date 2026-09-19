@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next";
-import { organization, routes, professionals, news } from "@/lib/data";
-export default function sitemap(): MetadataRoute.Sitemap {
+import { organization, routes, news } from "@/lib/data";
+import { getPublishedProfessionals } from "@/lib/professionals-repository";
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const professionals = await getPublishedProfessionals();
   return [
     ...routes
       .filter((r) => r !== "news" || news.length > 0)
