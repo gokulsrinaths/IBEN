@@ -16,5 +16,11 @@ export default defineConfig({
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 60000,
+    // Force the submission backend "unavailable" for this run regardless
+    // of .env.local -- several tests assert the fail-closed behavior, and
+    // real Supabase credentials here would submit real test data into
+    // production on every test run (this happened twice before this was
+    // added; the rows were manually deleted from Supabase afterwards).
+    env: { SUPABASE_URL: "", SUPABASE_SERVICE_ROLE_KEY: "" },
   },
 });
