@@ -1303,6 +1303,50 @@ textarea:focus {
   top: 50%;
   transform: translateY(-50%);
 }
+.apply-popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 20, 15, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 24px;
+}
+.apply-popup {
+  position: relative;
+  background: var(--paper);
+  max-width: 440px;
+  width: 100%;
+  padding: 44px 36px 36px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+}
+.apply-popup h2 {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  margin: 10px 0 14px;
+}
+.apply-popup p {
+  font-size: 14px;
+  line-height: 1.6;
+}
+.apply-popup-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  padding: 6px;
+}
+.apply-popup-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  margin-top: 22px;
+}
 .news-card {
   display: block;
   padding: 30px;

@@ -13,6 +13,7 @@ import {
 } from "@/components/ui";
 import { categories, organization } from "@/lib/data";
 import { pageMetadata } from "@/lib/seo";
+import { ApplyPopup } from "@/components/apply-popup";
 export const metadata = pageMetadata(
   "Recognising Excellence in Indian Beauty",
   organization.description,
@@ -21,6 +22,7 @@ export const metadata = pageMetadata(
 export default function Home() {
   return (
     <>
+      <ApplyPopup />
       <section className="home-hero">
         <Container>
           <div className="hero-overline">
