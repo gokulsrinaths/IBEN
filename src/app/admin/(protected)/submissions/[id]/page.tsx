@@ -20,6 +20,26 @@ export default async function SubmissionDetail({
   if (!data) notFound();
 
   const values = (data.values || {}) as Record<string, string>;
+  const { portfolioObjectKeys, ...displayValues } = values;
+
+  let portfolioUrls: string[] = [];
+  if (portfolioObjectKeys) {
+    try {
+      const paths: unknown = JSON.parse(portfolioObjectKeys);
+      if (Array.isArray(paths) && paths.every((p) => typeof p === "string")) {
+        const signed = await Promise.all(
+          paths.map((path) =>
+            supabase.storage.from("portfolios").createSignedUrl(path, 3600),
+          ),
+        );
+        portfolioUrls = signed
+          .map((s) => s.data?.signedUrl)
+          .filter((u): u is string => Boolean(u));
+      }
+    } catch {
+      // malformed value -- ignore, nothing to show
+    }
+  }
 
   return (
     <div style={{ maxWidth: 720 }}>
@@ -36,13 +56,38 @@ export default async function SubmissionDetail({
 
       <h2 style={{ fontSize: 16, marginBottom: 10 }}>Submitted values</h2>
       <dl style={{ marginBottom: 28, fontSize: 13 }}>
-        {Object.entries(values).map(([key, value]) => (
+        {Object.entries(displayValues).map(([key, value]) => (
           <div key={key} style={{ display: "grid", gridTemplateColumns: "160px 1fr", gap: 8, padding: "6px 0", borderBottom: "1px solid var(--line)" }}>
             <dt style={{ color: "var(--muted)" }}>{key}</dt>
             <dd style={{ whiteSpace: "pre-wrap" }}>{value || "—"}</dd>
           </div>
         ))}
       </dl>
+
+      {portfolioUrls.length > 0 && (
+        <>
+          <h2 style={{ fontSize: 16, marginBottom: 10 }}>
+            Uploaded portfolio images ({portfolioUrls.length})
+          </h2>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 28 }}>
+            {portfolioUrls.map((url) => (
+              <a key={url} href={url} target="_blank" rel="noopener noreferrer">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={url}
+                  alt="Applicant-uploaded portfolio image"
+                  width={120}
+                  height={120}
+                  style={{ objectFit: "cover", border: "1px solid var(--line)" }}
+                />
+              </a>
+            ))}
+          </div>
+          <p style={{ fontSize: 11, color: "var(--muted)", marginTop: -18, marginBottom: 28 }}>
+            Links expire after 1 hour. Reload this page for fresh links.
+          </p>
+        </>
+      )}
 
       <h2 style={{ fontSize: 16, marginBottom: 10 }}>Review</h2>
       <StatusForm

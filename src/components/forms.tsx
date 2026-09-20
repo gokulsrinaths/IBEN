@@ -13,7 +13,12 @@ import {
   type Values,
   type FieldSpec,
 } from "@/lib/form-fields";
-import { submitForm, formCopy, checkAvailability } from "@/lib/submission-client";
+import {
+  submitForm,
+  formCopy,
+  checkAvailability,
+  uploadPortfolioFile,
+} from "@/lib/submission-client";
 function Field({
   spec: s,
   values,
@@ -117,7 +122,9 @@ function RecognitionForm({
   const [values, setValues] = useState<Values>({
     category: categories.find((c) => c.slug === initialCategory)?.name || "",
   });
-  const [files, setFiles] = useState<File[]>([]);
+  const [files, setFiles] = useState<
+    { file: File; path?: string; uploading: boolean; failed?: boolean }[]
+  >([]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [available, setAvailable] = useState<boolean | null>(null);
@@ -171,9 +178,26 @@ function RecognitionForm({
       move(step + 1);
       return;
     }
+    if (files.some((f) => f.uploading)) {
+      setError("Wait for your portfolio images to finish uploading.");
+      return;
+    }
+    if (files.some((f) => f.failed)) {
+      setError("Remove any portfolio images that failed to upload.");
+      return;
+    }
     setPending(true);
     try {
-      const result = await submitForm({ kind, values, files });
+      const portfolioObjectKeys = files
+        .map((f) => f.path)
+        .filter((p): p is string => Boolean(p));
+      const result = await submitForm({
+        kind,
+        values: portfolioObjectKeys.length
+          ? { ...values, portfolioObjectKeys: JSON.stringify(portfolioObjectKeys) }
+          : values,
+        files: [],
+      });
       if (result.ok) {
         setReference(result.reference);
         setSuccess(true);
@@ -204,14 +228,29 @@ function RecognitionForm({
       e.target.value = "";
       return;
     }
+    const fresh = incoming.filter(
+      (f) => !files.some((o) => o.file.name === f.name && o.file.size === f.size),
+    );
     setFiles((old) => [
       ...old,
-      ...incoming.filter(
-        (f) => !old.some((o) => o.name === f.name && o.size === f.size),
-      ),
+      ...fresh.map((file) => ({ file, uploading: available === true })),
     ]);
     setSuccess(false);
     e.target.value = "";
+    if (available !== true) return;
+    for (const file of fresh) {
+      uploadPortfolioFile(file).then((result) => {
+        setFiles((old) =>
+          old.map((f) =>
+            f.file === file
+              ? result.ok
+                ? { ...f, uploading: false, path: result.path }
+                : { ...f, uploading: false, failed: true }
+              : f,
+          ),
+        );
+      });
+    }
   };
   return (
     <div className="form-panel">
@@ -278,9 +317,11 @@ function RecognitionForm({
                   Select only work and images you have permission to share.
                 </p>
                 <p id="upload-guidance">
-                  HEIC/HEIF images are not supported. Export them as JPG first.
-                  Images are previewed locally and are not uploaded while
-                  submissions are unavailable.
+                  HEIC/HEIF images are not supported. Export them as JPG
+                  first.{" "}
+                  {available === true
+                    ? "Images upload as soon as you select them."
+                    : "Images are previewed locally and are not uploaded while submissions are unavailable."}
                 </p>
                 <input
                   aria-describedby="upload-guidance"
@@ -293,15 +334,18 @@ function RecognitionForm({
               </div>
               <ul className="file-list preview-list">
                 {files.map((f, i) => (
-                  <li key={`${f.name}-${i}`}>
-                    <UploadPreview file={f} />
+                  <li key={`${f.file.name}-${i}`}>
+                    <UploadPreview file={f.file} />
                     <span>
-                      {f.name} · {(f.size / 1024 / 1024).toFixed(1)} MB
+                      {f.file.name} · {(f.file.size / 1024 / 1024).toFixed(1)} MB
+                      {f.uploading && " · Uploading..."}
+                      {f.failed && " · Upload failed"}
+                      {f.path && " · Uploaded"}
                     </span>
                     <button
                       type="button"
                       onClick={() => setFiles(files.filter((_, j) => j !== i))}
-                      aria-label={`Remove ${f.name}`}
+                      aria-label={`Remove ${f.file.name}`}
                     >
                       Remove
                     </button>
@@ -322,7 +366,7 @@ function RecognitionForm({
                 <dt>Portfolio images</dt>
                 <dd>
                   {files.length
-                    ? files.map((f) => f.name).join(", ")
+                    ? files.map((f) => f.file.name).join(", ")
                     : "None selected"}
                 </dd>
               </div>

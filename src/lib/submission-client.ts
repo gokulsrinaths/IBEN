@@ -53,6 +53,38 @@ export async function checkAvailability(): Promise<boolean> {
   }
 }
 
+/** Uploads one portfolio image to the private `portfolios` bucket.
+ * Callers must confirm availability first -- this never runs while
+ * submissions are closed. */
+export async function uploadPortfolioFile(
+  file: File,
+): Promise<{ ok: true; path: string } | { ok: false }> {
+  try {
+    const body = new FormData();
+    body.set("file", file);
+    const response = await fetch("/api/submissions/upload", {
+      method: "POST",
+      body,
+      signal: AbortSignal.timeout(30000),
+    });
+    if (!response.ok) return { ok: false };
+    const result: unknown = await response.json();
+    if (
+      result &&
+      typeof result === "object" &&
+      "ok" in result &&
+      result.ok === true &&
+      "path" in result &&
+      typeof result.path === "string" &&
+      result.path.startsWith("pending/")
+    )
+      return { ok: true, path: result.path };
+    return { ok: false };
+  } catch {
+    return { ok: false };
+  }
+}
+
 export async function submitForm(
   input: SubmissionInput,
 ): Promise<SubmissionResult> {
@@ -60,7 +92,6 @@ export async function submitForm(
   const body = new FormData();
   body.set("kind", input.kind);
   body.set("values", JSON.stringify(input.values));
-  for (const file of input.files) body.append("portfolio", file);
   const response = await fetch("/api/submissions", {
     method: "POST",
     body,
