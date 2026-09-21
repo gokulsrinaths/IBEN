@@ -21,6 +21,25 @@ export default async function PublishPage({
 
   const v = (data.values || {}) as Record<string, string>;
 
+  let applicantImages: { path: string; previewUrl: string }[] = [];
+  if (v.portfolioObjectKeys) {
+    try {
+      const paths: unknown = JSON.parse(v.portfolioObjectKeys);
+      if (Array.isArray(paths) && paths.every((p) => typeof p === "string")) {
+        const signed = await Promise.all(
+          paths.map((path) =>
+            supabase.storage.from("portfolios").createSignedUrl(path, 3600),
+          ),
+        );
+        applicantImages = paths
+          .map((path, i) => ({ path, previewUrl: signed[i].data?.signedUrl || "" }))
+          .filter((p) => p.previewUrl);
+      }
+    } catch {
+      // malformed value -- ignore, nothing to import
+    }
+  }
+
   return (
     <div>
       <p style={{ marginBottom: 16 }}>
@@ -31,6 +50,7 @@ export default async function PublishPage({
       </h1>
       <PublishForm
         submissionId={id}
+        applicantImages={applicantImages}
         initial={{
           name: v.fullName || "",
           city: v.city || "",

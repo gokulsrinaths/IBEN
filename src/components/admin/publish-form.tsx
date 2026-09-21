@@ -16,6 +16,7 @@ type PortfolioItem = { image: string; caption: string; uploading?: boolean };
 export function PublishForm({
   submissionId,
   initial,
+  applicantImages = [],
 }: {
   submissionId: string;
   initial: {
@@ -27,6 +28,7 @@ export function PublishForm({
     bio: string;
     experience: string;
   };
+  applicantImages?: { path: string; previewUrl: string }[];
 }) {
   const router = useRouter();
   const [name] = useState(initial.name);
@@ -54,6 +56,7 @@ export function PublishForm({
   const [portfolio, setPortfolio] = useState<PortfolioItem[]>([]);
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
+  const [importingPath, setImportingPath] = useState<string | null>(null);
 
   const uploadFile = async (file: File): Promise<string | null> => {
     const body = new FormData();
@@ -62,6 +65,34 @@ export function PublishForm({
     const res = await fetch("/api/admin/uploads", { method: "POST", body });
     const json = await res.json();
     return json.ok ? json.url : null;
+  };
+
+  const importApplicantImage = async (path: string): Promise<string | null> => {
+    const res = await fetch("/api/admin/professionals/import-image", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ path, folder: slug || "professional" }),
+    });
+    const json = await res.json().catch(() => null);
+    return json?.ok ? json.url : null;
+  };
+
+  const setHeadshotFromApplicantImage = async (path: string) => {
+    setImportingPath(path);
+    setError("");
+    const url = await importApplicantImage(path);
+    setImportingPath(null);
+    if (url) setImage(url);
+    else setError("Could not import that image as the headshot.");
+  };
+
+  const addApplicantImageToPortfolio = async (path: string) => {
+    setImportingPath(path);
+    setError("");
+    const url = await importApplicantImage(path);
+    setImportingPath(null);
+    if (url) setPortfolio((p) => [...p, { image: url, caption: "" }]);
+    else setError("Could not import that image into the portfolio.");
   };
 
   const onHeadshot = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -199,6 +230,55 @@ export function PublishForm({
         <span>Profile ID</span>
         <input value={profileId} onChange={(e) => setProfileId(e.target.value)} required />
       </label>
+
+      {applicantImages.length > 0 && (
+        <div>
+          <p style={{ fontSize: 13, marginBottom: 8 }}>
+            Applicant&rsquo;s submitted images
+          </p>
+          <ul
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 12,
+              listStyle: "none",
+              padding: 0,
+              margin: 0,
+            }}
+          >
+            {applicantImages.map((img) => (
+              <li key={img.path} style={{ display: "flex", flexDirection: "column", gap: 6, alignItems: "center" }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={img.previewUrl}
+                  alt="Applicant-submitted portfolio image"
+                  width={100}
+                  height={100}
+                  style={{ objectFit: "cover", border: "1px solid var(--line)" }}
+                />
+                <div style={{ display: "flex", gap: 6 }}>
+                  <button
+                    type="button"
+                    onClick={() => setHeadshotFromApplicantImage(img.path)}
+                    disabled={importingPath === img.path}
+                    style={{ fontSize: 11 }}
+                  >
+                    {importingPath === img.path ? "Importing..." : "Use as headshot"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => addApplicantImageToPortfolio(img.path)}
+                    disabled={importingPath === img.path}
+                    style={{ fontSize: 11 }}
+                  >
+                    Add to portfolio
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <label className="field">
         <span>Headshot</span>
