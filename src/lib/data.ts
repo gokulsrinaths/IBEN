@@ -190,7 +190,7 @@ export const faqs = [
   ],
   [
     "Are applications currently being accepted?",
-    "Yes. Applications, nominations and enquiries can be submitted online. Receipt of a submission does not mean selection or recognition; every submission is subject to review.",
+    "Yes, applications are currently being accepted for the Chennai intake of IBEN Top 50 Beauty Professionals 2026. Nominations and enquiries can also be submitted online. Receipt of a submission does not mean selection or recognition; every submission is subject to review.",
   ],
 ];
 export type Professional = {

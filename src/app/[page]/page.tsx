@@ -303,15 +303,15 @@ export default async function ContentPage({ params, searchParams }: Props) {
                 India may put their work forward.
               </p>
               <p>
-                Provide your professional details, a relevant category and a
-                portfolio that shows your own contribution. Any additional
-                requirements or intake dates will be published before
-                submissions open.
+                Provide your professional details and information about your
+                work. Additional portfolio examples or information may be
+                requested during the review process.
               </p>
               <div className="notice">
-                <strong>2026 intake details are pending confirmation.</strong>{" "}
-                No application deadline, fee or selection date has been
-                published.
+                <strong>2026 applications are now open.</strong> Beauty
+                professionals in Chennai can currently submit their details
+                for consideration. Applications are reviewed according to the
+                IBEN evaluation process.
               </div>
             </div>
           </Content>
@@ -378,9 +378,10 @@ export default async function ContentPage({ params, searchParams }: Props) {
                 social audience defines excellence.
               </p>
               <p>
-                The framework below describes the intended assessment process.
-                Programme-specific intake dates, reviewer details and any
-                additional requirements will be published when confirmed.
+                The framework below describes the assessment process
+                professionals go through once they apply. Additional context,
+                reviewer conversations or portfolio material may be requested
+                as part of that review.
               </p>
               <div className="notice">
                 <strong>
@@ -504,9 +505,11 @@ export default async function ContentPage({ params, searchParams }: Props) {
             <p className="eyebrow">YOUR APPLICATION</p>
             <h2>A considered introduction.</h2>
             <p>
-              Set aside your contact details, professional experience and an
-              accessible portfolio link. Choose examples that reflect the
-              quality and consistency of your own work.
+              This is the official IBEN application form. Set aside your
+              contact details, professional experience and a few portfolio
+              images that reflect the quality and consistency of your own
+              work. IBEN may request additional portfolio material or
+              information during review.
             </p>
 
             <TextLink href="/selection-process">How selection works</TextLink>
@@ -783,10 +786,9 @@ export default async function ContentPage({ params, searchParams }: Props) {
           />
           <div className="prose">
             <div className="notice">
-              <strong>Initial website terms.</strong> The responsible operating
-              entity and programme-specific terms are pending confirmation.
-              These terms describe the scope of the current informational
-              website and forms awaiting submission availability.
+              <strong>These terms describe the scope of this website and its
+              application forms.</strong> They apply alongside the Privacy
+              Policy and the Standards &amp; Ethics page.
             </div>
             <h2>About this website</h2>
             <p>
