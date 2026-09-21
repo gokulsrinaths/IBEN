@@ -11,7 +11,31 @@ export type FieldSpec = {
   min?: number;
   max?: number;
   placeholder?: string;
+  /** When set, the field only applies (renders, validates, appears in
+   * review) if this returns true for the current form values. Used to
+   * keep category-irrelevant questions -- e.g. hair colour technique
+   * for a nail artist -- from ever being asked. */
+  showIf?: (values: Values) => boolean;
 };
+export const hairCategories = ["Hair Styling", "Hair Colour", "Hair Treatments"];
+const isHairProfessional = (values: Values) =>
+  hairCategories.includes(values.category);
+export const MIN_PORTFOLIO_IMAGES = 3;
+export const MAX_PORTFOLIO_IMAGES = 8;
+export const serviceOptions = [
+  "Haircuts & Styling",
+  "Hair Colouring",
+  "Hair Treatments",
+  "Bridal Hair & Makeup",
+  "Party / Event Styling",
+  "Everyday Makeup",
+  "HD / Airbrush Makeup",
+  "Nail Art & Extensions",
+  "Manicure & Pedicure",
+  "Facials & Skincare",
+  "Lash Extensions",
+  "Threading & Waxing",
+];
 export const personal: FieldSpec[] = [
   { name: "fullName", label: "Full name", required: true, placeholder: "e.g. Priya Sharma" },
   {
@@ -64,6 +88,14 @@ export const practice: FieldSpec[] = [
     options: categories.map((c) => c.name),
   },
   {
+    name: "servicesOffered",
+    label: "Services offered",
+    type: "multiselect",
+    required: true,
+    wide: true,
+    options: serviceOptions,
+  },
+  {
     name: "specialisations",
     label: "Specialisations",
     required: true,
@@ -71,9 +103,53 @@ export const practice: FieldSpec[] = [
     placeholder: "e.g. Balayage, precision cutting, keratin treatments",
   },
   {
-    name: "workplace",
-    label: "Current workplace / salon",
-    placeholder: "e.g. Studio name or salon",
+    name: "mostBookedServices",
+    label: "Most booked services",
+    placeholder: "e.g. Bridal hairstyling, balayage colour",
+  },
+  {
+    name: "hairColourServices",
+    label: "Hair colour services you provide",
+    placeholder: "e.g. Global colour, balayage, highlights, colour correction",
+    showIf: isHairProfessional,
+  },
+  {
+    name: "hairTreatments",
+    label: "Hair treatments you provide",
+    placeholder: "e.g. Keratin, smoothening, hair spa, scalp treatments",
+    showIf: isHairProfessional,
+  },
+  {
+    name: "providesConsultations",
+    label: "Do you provide client consultations?",
+    options: ["Yes", "No"],
+  },
+  {
+    name: "trainingCertifications",
+    label: "Professional training / certifications",
+    type: "textarea",
+    wide: true,
+    placeholder: "Institute, course and certification details.",
+  },
+  {
+    name: "providesHomeService",
+    label: "Do you provide home services?",
+    options: ["Yes", "No"],
+  },
+  {
+    name: "hasOwnEquipment",
+    label: "Do you have your own professional equipment?",
+    options: ["Yes", "No", "Partially"],
+  },
+  {
+    name: "productsBrands",
+    label: "Products / brands you commonly work with",
+    placeholder: "e.g. Wella, L'Oreal Professionnel, MAC",
+  },
+  {
+    name: "priceRange",
+    label: "Typical service price range",
+    placeholder: "e.g. ₹2,000 – ₹8,000 per bridal look",
   },
   {
     name: "profileUrl",
@@ -85,8 +161,7 @@ export const practice: FieldSpec[] = [
     name: "portfolioUrl",
     label: "Portfolio URL",
     type: "url",
-    required: true,
-    hint: "Use an accessible https:// link to work you have permission to share.",
+    hint: "Optional -- your uploaded portfolio images below are the main evidence we review.",
     placeholder: "https://yourportfolio.example.com",
   },
   {

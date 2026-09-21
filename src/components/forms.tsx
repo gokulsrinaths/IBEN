@@ -10,6 +10,9 @@ import {
   nomination,
   contact,
   validateField,
+  hairCategories,
+  MIN_PORTFOLIO_IMAGES,
+  MAX_PORTFOLIO_IMAGES,
   type Values,
   type FieldSpec,
 } from "@/lib/form-fields";
@@ -43,6 +46,38 @@ function Field({
     },
     "aria-describedby": s.hint ? `${s.name}-hint` : undefined,
   };
+  if (s.type === "multiselect") {
+    const selected = (values[s.name] || "")
+      .split(",")
+      .map((v) => v.trim())
+      .filter(Boolean);
+    const toggle = (option: string, checked: boolean) => {
+      const next = checked
+        ? [...selected, option]
+        : selected.filter((v) => v !== option);
+      onChange(s.name, next.join(", "));
+    };
+    return (
+      <fieldset className={`field checkbox-group ${s.wide ? "wide" : ""}`}>
+        <legend>
+          {s.label}
+          {s.required && <span aria-label="required"> *</span>}
+        </legend>
+        <div className="checkbox-grid">
+          {(s.options || []).map((option) => (
+            <label key={option} className="checkbox-field">
+              <input
+                type="checkbox"
+                checked={selected.includes(option)}
+                onChange={(e) => toggle(option, e.target.checked)}
+              />
+              <span>{option}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+    );
+  }
   return (
     <label className={`field ${s.wide ? "wide" : ""}`} htmlFor={s.name}>
       <span>
@@ -139,7 +174,7 @@ function RecognitionForm({
       cancelled = true;
     };
   }, []);
-  const specs = application
+  const allSpecs = application
     ? step === 0
       ? personal
       : step === 1
@@ -148,8 +183,16 @@ function RecognitionForm({
     : kind === "nomination"
       ? nomination
       : contact;
+  const specs = allSpecs.filter((s) => !s.showIf || s.showIf(values));
   const setValue = (name: string, value: string) => {
-    setValues((v) => ({ ...v, [name]: value }));
+    setValues((v) => {
+      const next = { ...v, [name]: value };
+      if (name === "category" && !hairCategories.includes(value)) {
+        delete next.hairColourServices;
+        delete next.hairTreatments;
+      }
+      return next;
+    });
     setSuccess(false);
   };
   const move = (next: number) => {
@@ -161,12 +204,20 @@ function RecognitionForm({
     }, 0);
   };
   const validate = () => {
+    let multiselectOk = true;
     for (const spec of specs) {
+      if (spec.type === "multiselect") {
+        if (spec.required && !(values[spec.name] || "").trim()) {
+          setError(`Select at least one option for “${spec.label}”.`);
+          multiselectOk = false;
+        }
+        continue;
+      }
       const input = form.current?.elements.namedItem(spec.name) as
         HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null;
       input?.setCustomValidity(validateField(spec, values[spec.name] || ""));
     }
-    return form.current?.reportValidity();
+    return Boolean(form.current?.reportValidity()) && multiselectOk;
   };
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -174,6 +225,12 @@ function RecognitionForm({
     setError("");
     setSuccess(false);
     if (!validate()) return;
+    if (application && step === 1 && files.length < MIN_PORTFOLIO_IMAGES) {
+      setError(
+        `Add at least ${MIN_PORTFOLIO_IMAGES} portfolio images before continuing.`,
+      );
+      return;
+    }
     if (application && step < 2) {
       move(step + 1);
       return;
@@ -212,8 +269,8 @@ function RecognitionForm({
   const addFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
     const incoming = Array.from(e.target.files || []);
     setError("");
-    if (files.length + incoming.length > 8) {
-      setError("Choose up to 8 portfolio images in total.");
+    if (files.length + incoming.length > MAX_PORTFOLIO_IMAGES) {
+      setError(`Choose up to ${MAX_PORTFOLIO_IMAGES} portfolio images in total.`);
       e.target.value = "";
       return;
     }
@@ -307,12 +364,14 @@ function RecognitionForm({
           {application && step === 1 && (
             <div className="wide" style={{ marginTop: 25 }}>
               <label className="field" htmlFor="portfolioFiles">
-                Portfolio images (optional)
+                <span>
+                  Portfolio images<span aria-label="required"> *</span>
+                </span>
               </label>
               <div className="upload-zone">
                 <Upload size={25} />
                 <p>
-                  Up to 8 images · JPG, PNG or WebP · 5 MB each
+                  {MIN_PORTFOLIO_IMAGES}–{MAX_PORTFOLIO_IMAGES} images · JPG, PNG or WebP · 5 MB each
                   <br />
                   Select only work and images you have permission to share.
                 </p>
@@ -327,7 +386,7 @@ function RecognitionForm({
                   aria-describedby="upload-guidance"
                   id="portfolioFiles"
                   type="file"
-                  accept="image/jpeg,image/png,image/webp"
+                  accept="image/*"
                   multiple
                   onChange={addFiles}
                 />
@@ -356,7 +415,9 @@ function RecognitionForm({
           )}
           {application && step === 2 && (
             <dl className="review-list">
-              {[...personal, ...practice].map((s) => (
+              {[...personal, ...practice]
+                .filter((s) => !s.showIf || s.showIf(values))
+                .map((s) => (
                 <div key={s.name}>
                   <dt>{s.label}</dt>
                   <dd>{values[s.name] || "Not provided"}</dd>
@@ -367,7 +428,7 @@ function RecognitionForm({
                 <dd>
                   {files.length
                     ? files.map((f) => f.file.name).join(", ")
-                    : "None selected"}
+                    : "Not provided"}
                 </dd>
               </div>
             </dl>
@@ -407,7 +468,7 @@ function RecognitionForm({
                   <span>
                     I confirm that the information is accurate to the best of my
                     knowledge and that I have permission to share the
-                    information and portfolio links provided. I understand that
+                    information, images and portfolio links provided. I understand that
                     recognition is subject to review and is not guaranteed. *
                   </span>
                 </label>

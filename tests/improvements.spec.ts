@@ -16,6 +16,7 @@ async function practiceDetails(page: Page) {
     .locator("#professionalType")
     .selectOption("Independent/Freelance Professional");
   await page.locator("#category").selectOption("Hair Colour");
+  await page.getByLabel("Hair Colouring").check();
   await page.locator("#specialisations").fill("Colour correction");
   await page.locator("#portfolioUrl").fill("https://example.com/portfolio");
   await page.locator("#bio").fill("Test professional biography.");
@@ -114,11 +115,11 @@ test("application preserves steps, previews and removes images, and never downlo
   ).toHaveCount(0);
   await page
     .locator("#portfolioFiles")
-    .setInputFiles({
-      name: "portfolio.png",
-      mimeType: "image/png",
-      buffer: png,
-    });
+    .setInputFiles([
+      { name: "portfolio.png", mimeType: "image/png", buffer: png },
+      { name: "portfolio2.png", mimeType: "image/png", buffer: png },
+      { name: "portfolio3.png", mimeType: "image/png", buffer: png },
+    ]);
   await page.getByRole("button", { name: "Continue" }).click();
   await expect(page.locator(".review-list")).toContainText("Test Applicant");
   await page.getByRole("button", { name: "Back", exact: true }).click();

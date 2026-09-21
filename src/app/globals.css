@@ -1035,6 +1035,29 @@ textarea:focus {
 .checkbox-field a {
   text-decoration: underline;
 }
+.checkbox-group {
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.checkbox-group legend {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 0;
+}
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 4px 16px;
+  margin-top: 4px;
+}
+.checkbox-grid .checkbox-field {
+  margin: 4px 0;
+  font-weight: 400;
+}
 .upload-zone {
   padding: 25px;
   border: 1px dashed #b9b6a8;
