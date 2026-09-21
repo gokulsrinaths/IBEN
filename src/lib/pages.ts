@@ -76,10 +76,10 @@ export const pages: Record<
       "Straightforward answers about IBEN, who can take part, how selection works and how to check a recognition record.",
   },
   privacy: {
-    eyebrow: "Privacy notice",
+    eyebrow: "Privacy policy",
     title: "Your information, handled with care.",
     description:
-      "An explanation of how this initial website handles information, form entries and enquiries.",
+      "How IBEN collects, uses and protects information submitted through our website, Meta lead forms, WhatsApp and other IBEN channels.",
   },
   terms: {
     eyebrow: "Terms of use",

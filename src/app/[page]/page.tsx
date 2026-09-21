@@ -634,55 +634,142 @@ export default async function ContentPage({ params, searchParams }: Props) {
       content = (
         <Content className="content-grid">
           <SectionHeader
-            eyebrow="WEBSITE PRIVACY"
-            title="What happens to your information."
+            eyebrow="PRIVACY POLICY"
+            title="Your information, handled with care."
           />
           <div className="prose">
-            <div className="notice">
-              <strong>Initial website notice.</strong> A full operational
-              privacy policy, responsible entity details, contact address and
-              retention schedule must be confirmed before live applications or
-              enquiries are accepted.
-            </div>
-            <h2>Application, nomination and enquiry entries</h2>
             <p>
-              The forms on this website keep your entries in the current page’s
-              memory. They do not send form entries or selected portfolio files
-              to IBEN. Reloading or leaving the page clears the entries. A
-              submission availability check sends no form entries or images. No
-              files are downloaded.
+              <em>Last updated: 21 September 2026</em>
             </p>
-            <h2>Portfolio images</h2>
             <p>
-              Selected files are checked locally for format and size. Local
-              previews are created in your browser and released when removed or
-              when you leave the form. Share only work and client images you
-              have permission to use.
+              India Beauty Excellence Network (“IBEN”, “we”, “us” or “our”)
+              respects your privacy. This Privacy Policy explains how we
+              collect, use and protect information submitted through our
+              website, Meta lead forms, WhatsApp and other IBEN application or
+              communication channels.
             </p>
-            <h2>Website delivery</h2>
+            <h2>Information we collect</h2>
             <p>
-              Your browser requests pages and assets from the hosting provider.
-              The provider may process technical information such as IP
-              addresses and request logs to deliver and protect the site. This
-              website does not include advertising, marketing trackers or an
-              analytics integration.
+              When you apply for an IBEN recognition initiative, nominate a
+              professional, contact us, or otherwise interact with IBEN, we
+              may collect information such as:
             </p>
-            <h2>Future submissions</h2>
+            <ul>
+              <li>Name and contact information, including phone or WhatsApp number</li>
+              <li>City, location and professional experience</li>
+              <li>Beauty services and specialisations</li>
+              <li>Training and professional background</li>
+              <li>Brands or products used professionally</li>
+              <li>Instagram or other professional profile information</li>
+              <li>Portfolio or work images that you choose to share</li>
+              <li>Information you provide during calls, messages, applications or enquiries</li>
+            </ul>
+            <h2>How we use your information</h2>
+            <p>We may use this information to:</p>
+            <ul>
+              <li>Review applications for IBEN recognition programmes, including the IBEN Top 50 Beauty Professionals</li>
+              <li>Assess professional experience, services and submitted or publicly available professional work</li>
+              <li>Contact applicants about their application or the next stage of the review process</li>
+              <li>Request additional information or portfolio examples when necessary</li>
+              <li>Manage nominations and enquiries</li>
+              <li>Maintain records relating to IBEN applications, selections and professional recognition</li>
+              <li>Improve IBEN programmes and communications</li>
+            </ul>
             <p>
-              Before live submission is enabled, this notice should explain who
-              receives your data, the reasons for processing it, service
-              providers, access controls, retention, relevant rights and how to
-              request a correction or deletion. A nomination workflow should
-              explain how nominee consent is obtained.
+              Submitting an application does not guarantee selection or
+              recognition.
             </p>
-            <h2>Contact and corrections</h2>
+            <h2>Meta and Instagram Lead Forms</h2>
             <p>
-              Verified privacy contact details are pending publication. Visit
-              the contact page for currently configured channels. Avoid sharing
-              sensitive personal information until an appropriate submission
-              channel is available.
+              IBEN may collect application information through lead forms
+              provided by Meta platforms such as Facebook and Instagram.
             </p>
-            <TextLink href="/contact">Contact information</TextLink>
+            <p>
+              Information submitted through these forms is provided to IBEN
+              and may also be processed by Meta according to Meta’s own
+              privacy policies.
+            </p>
+            <p>
+              Where available, IBEN may review professional or public profile
+              information associated with an applicant’s social media
+              presence as part of the application review process.
+            </p>
+            <h2>WhatsApp and communications</h2>
+            <p>
+              If you provide a WhatsApp number or consent to communication
+              through WhatsApp, IBEN may contact you regarding your
+              application, recognition process, portfolio, enquiries or
+              related IBEN activities.
+            </p>
+            <p>You may ask us to stop non-essential communications at any time.</p>
+            <h2>Portfolio and professional work</h2>
+            <p>
+              Applicants may voluntarily provide portfolio images, links or
+              other examples of their professional work.
+            </p>
+            <p>
+              Please only share photographs or other materials that you have
+              permission to share. IBEN may use submitted portfolio material
+              for application assessment and verification. We will seek
+              appropriate permission before using submitted work publicly for
+              promotional or recognition purposes where required.
+            </p>
+            <h2>How we protect and retain information</h2>
+            <p>
+              IBEN takes reasonable measures to protect personal information
+              from unauthorised access, misuse or disclosure.
+            </p>
+            <p>
+              Information will be retained only for as long as reasonably
+              necessary for the purposes described in this policy, including
+              application review, record keeping and legitimate
+              organisational requirements.
+            </p>
+            <h2>Sharing of information</h2>
+            <p>IBEN does not sell applicants’ personal information.</p>
+            <p>
+              Information may be accessed by authorised IBEN team members and
+              service providers where necessary to operate our website,
+              application systems, communications or recognition programmes.
+              Information may also be disclosed where required by law.
+            </p>
+            <h2>Your choices</h2>
+            <p>
+              You may contact IBEN to request access to, correction of, or
+              deletion of personal information you have provided, subject to
+              applicable legal and operational requirements.
+            </p>
+            <p>You may also ask IBEN to stop sending non-essential communications.</p>
+            <h2>Third-party services</h2>
+            <p>
+              IBEN may use third-party services such as Meta, Instagram,
+              WhatsApp and website hosting or technology providers. These
+              services may process information according to their own privacy
+              policies and terms.
+            </p>
+            <h2>Contact</h2>
+            <p>
+              For privacy questions, corrections or deletion requests,
+              contact:
+            </p>
+            <p>
+              <strong>India Beauty Excellence Network (IBEN)</strong>
+              <br />
+              Website: <a href="https://www.joiniben.in">www.joiniben.in</a>
+              <br />
+              Contact: <TextLink href="/contact">www.joiniben.in/contact</TextLink>
+              <br />
+              Email:{" "}
+              <a href="mailto:indiabeautyexcellencenetwork@gmail.com">
+                indiabeautyexcellencenetwork@gmail.com
+              </a>
+            </p>
+            <h2>Updates to this policy</h2>
+            <p>
+              We may update this Privacy Policy as IBEN’s services and
+              programmes develop. The latest version will be published on
+              this page with an updated revision date.
+            </p>
           </div>
         </Content>
       );
