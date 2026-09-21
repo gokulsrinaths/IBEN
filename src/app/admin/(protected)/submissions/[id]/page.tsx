@@ -94,9 +94,11 @@ export default async function SubmissionDetail({
         id={data.id}
         status={data.status}
         reviewerNotes={data.reviewer_notes || ""}
+        reviewedBy={data.reviewed_by || ""}
+        reviewedAt={data.reviewed_at}
       />
 
-      {data.kind === "application" && data.status === "accepted" && (
+      {data.kind === "application" && data.status === "selected" && (
         <p style={{ marginTop: 24 }}>
           <Link className="button button-dark" href={`/admin/submissions/${data.id}/publish`}>
             Publish as professional →

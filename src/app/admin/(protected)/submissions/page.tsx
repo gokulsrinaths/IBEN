@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
+import { submissionStatuses, statusLabels } from "@/lib/submission-status";
 
 type Row = {
   id: string;
@@ -52,9 +53,11 @@ export default async function SubmissionsList({
         <Link href={filterLink({ kind: "contact", status })}>Enquiries</Link>
         <span>·</span>
         <Link href={filterLink({ kind })}>All statuses</Link>
-        <Link href={filterLink({ kind, status: "received" })}>Received</Link>
-        <Link href={filterLink({ kind, status: "accepted" })}>Accepted</Link>
-        <Link href={filterLink({ kind, status: "declined" })}>Declined</Link>
+        {submissionStatuses.map((s) => (
+          <Link key={s} href={filterLink({ kind, status: s })}>
+            {statusLabels[s]}
+          </Link>
+        ))}
       </div>
       <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
         <thead>
@@ -74,7 +77,9 @@ export default async function SubmissionsList({
               </td>
               <td style={{ padding: "8px 6px" }}>{r.kind}</td>
               <td style={{ padding: "8px 6px" }}>{nameOf(r.values)}</td>
-              <td style={{ padding: "8px 6px" }}>{r.status}</td>
+              <td style={{ padding: "8px 6px" }}>
+                {statusLabels[r.status as keyof typeof statusLabels] || r.status}
+              </td>
               <td style={{ padding: "8px 6px" }}>
                 {new Date(r.created_at).toLocaleString()}
               </td>
